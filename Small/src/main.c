@@ -3,31 +3,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-void callError(){
-	printf("ERROR\n");
-}
-
-uint8_t readGarbage(){
-	char garbage;
-
-	if (scanf("%c", &garbage) != 1) {
-		return 1; //EOF reached
-	}
-	while (garbage != '\n') {
-		if (scanf("%c", &garbage) != 1) {
-			return 1; //EOF reached
-		}
-	}
-
-	return 0;
-}
-
-inline uint8_t checkChar(char c){
-	return (('A' <= c && c <= 'Z') || ('a' <= c && c <= 'z') || ('0' <= c && c <= '9'));
-}
+#include "parser.h"
 
 int main() {
-	size_t size_line = 32, n = 0;
+	size_t size_line = 32, n = 0; //n wskazuje na zaostatni
 	char curr_char, *line;
 	line = malloc(size_line * sizeof(char));
 	assert(line);
@@ -42,31 +21,32 @@ int main() {
 			    // 	printf("%c", line[i]);
 			    // }
 			    // printf("\n\n");
+    			parseLine(n, line);
     			is_newline = 1;
     			n = 0;
     			size_line = 32;
     			line = malloc(size_line * sizeof(char));
 				assert(line);
     			break;
+
     		case '#':
-    			if (is_newline == 1) {
-    				is_newline = 0;
-    				if (readGarbage() == 1) {
-    					flag = 0;
-    				}
-    			} else {
-    				callError();
-    				if (readGarbage() == 1) {
-    					flag = 0;
-    				}
-    				is_newline = 1;
-    				n = 0;
-    				size_line = 32;
-    				line = malloc(size_line * sizeof(char));
+    			if (is_newline == 0) {
+                    callError();
     			}
+
+                if (readGarbage() == 1) {
+                    flag = 0;
+                }
+                is_newline = 1;
+                n = 0;
+                size_line = 32;
+                line = malloc(size_line * sizeof(char));
+                assert(line);
     			break;
+
     		default:
     			if ( checkChar(curr_char) ) {
+                    is_newline = 0;
     				if (n == size_line - 1) {
     					size_line *= 2;
     					line = realloc(line, size_line * sizeof(char));
@@ -82,12 +62,14 @@ int main() {
     				n = 0;
     				size_line = 32;
     				line = malloc(size_line * sizeof(char));
+                    assert(line);
     			}
     			break;
     	}
     }
 
     //Pamietaj zwolnic pamiec
+    free(line);
 
     return 0;
 }
