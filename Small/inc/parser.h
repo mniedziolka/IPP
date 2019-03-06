@@ -1,4 +1,5 @@
 void callError();
 uint8_t readGarbage();
 uint8_t checkChar(char c);
-void parseLine(int n, char *line);
+int32_t getCommand(uint32_t n, char *line, char *command[5]);
+//void parseLine(uint32_t n, char *line);

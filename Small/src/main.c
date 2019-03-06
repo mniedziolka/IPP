@@ -6,6 +6,7 @@
 #include "parser.h"
 
 int main() {
+    char *command[5] = {"DECLARE", "REMOVE", "VALID", "ENERGY", "EQUAL"};
 	size_t size_line = 32, n = 0; //n wskazuje na zaostatni
 	char curr_char, *line;
 	line = malloc(size_line * sizeof(char));
@@ -16,12 +17,13 @@ int main() {
     while (flag == 1 && scanf("%c", &curr_char) == 1) {
     	switch (curr_char) {
     		case '\n':
+                ; //poprawic
     			// printf("%d<---\n", (int)n);
 			    // for(uint32_t i = 0; i < n; i++){
 			    // 	printf("%c", line[i]);
 			    // }
 			    // printf("\n\n");
-    			parseLine(n, line);
+    			int32_t cmd = getCommand(n, line, command);
     			is_newline = 1;
     			n = 0;
     			size_line = 32;
