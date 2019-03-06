@@ -4,6 +4,7 @@
 #include <stdlib.h>
 
 #include "parser.h"
+#include "trie.h"
 
 int main() {
     char *command[5] = {"DECLARE", "REMOVE", "VALID", "ENERGY", "EQUAL"};
