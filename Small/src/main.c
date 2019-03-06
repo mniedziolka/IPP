@@ -24,6 +24,11 @@ int main() {
 			    // }
 			    // printf("\n\n");
     			int32_t cmd = getCommand(n, line, command);
+                if (!cmd) {
+                    callError();
+                    readGarbage();
+                    break;
+                }
     			is_newline = 1;
     			n = 0;
     			size_line = 32;
