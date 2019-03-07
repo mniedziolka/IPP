@@ -5,11 +5,12 @@
 
 #include "trie.h"
 
+
 struct TrieNode *newNode() {
 	struct TrieNode *node = malloc(sizeof(struct TrieNode));
 	
-	node->radix_length = 0;
-	node->energy = 0;
+	node->energy = NULL;
+	node->ends_here = 0;
 	for (uint32_t i = 0; i < ALPHABET_SIZE; i++) {
 		node->children[i] = NULL;
 	}
@@ -17,15 +18,61 @@ struct TrieNode *newNode() {
 	return node;
 }
 
+
+void freeTrie(TrieNode *node) {
+	if (!node) {
+		for (int i = 0; i < ALPHABET_SIZE; i++) {
+			freeTrie(node->children[i]);
+		}
+		free(node->energy);
+		free(node->ends_here);
+		free(node);
+	}
+	//valgrind --leak-check=full  ./q
+}
+
 void insert(struct TrieNode *root, const char *key) {
 	uint32_t key_length = strlen(key);
 
 	struct TrieNode *node = root;
-	for (int i = 0; i < key_length; i++) {
-		if (!node->children[i]) {
-			node->children[i] = newNode();
+	for (uint32_t i = 0; i < key_length; i++) {
+		uint32_t curr = key[i] - '0';
+		if (!node->children[curr]) {
+			node->children[curr] = newNode();
 		}
-		node = node->children[i];
+		node = node->children[curr];
 	}
 
+	node->ends_here = 1;
+}
+
+
+uint8_t valid(struct TrieNode *root, const char *key) {
+	uint32_t key_length = strlen(key);
+
+	struct TrieNode *node = root;
+	for (uint32_t i = 0; i < key_length; i++){
+		uint32_t curr = key[i] - '0';
+		if (!node->children[curr]) {
+			return 0;
+		}
+		node = node->children[curr];
+	}
+	return 1;
+}
+
+
+void remove(struct TrieNode *root, const char *key) {
+	uint32_t key_length = strlen(key);
+
+	struct TrieNode *node = root;
+	for (uint32_t i = 0; i < key_length; i++) {
+		uint32_t curr = key[i] - '0';
+		if (!node->children[curr]) {
+			return;
+		}
+		node = node->children[curr];
+	}
+
+	freeTrie(node);
 }
