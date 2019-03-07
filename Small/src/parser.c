@@ -7,6 +7,7 @@ void callError() {
 	printf("ERROR\n");
 }
 
+
 uint8_t readGarbage() {
 	char garbage;
 
@@ -22,9 +23,11 @@ uint8_t readGarbage() {
 	return 0;
 }
 
+
 uint8_t checkChar(char c) {
 	return (('A' <= c && c <= 'Z') || ('a' <= c && c <= 'z') || ('0' <= c && c <= '9') || (c == ' '));
 }
+
 
 int32_t getCommand(uint32_t n, char *line, char *command[5]) {
 	for (uint32_t i = 0; i < 5; i++) {
@@ -47,6 +50,7 @@ int32_t getCommand(uint32_t n, char *line, char *command[5]) {
 
 	return 0;
 }
+
 
 void parseLine(uint32_t n, char *line) {
 

@@ -12,8 +12,10 @@ struct TrieNode {
 };
 
 struct TrieNode *newNode();
-void freeTrie(TrieNode *node);
-void insert(struct TrieNode *root, const char *key);
-uint8_t valid(struct TrieNode *root, const char *key);
+void freeTrie(struct TrieNode *node);
+void insertTrie(struct TrieNode *root, const char *key);
+uint8_t validTrie(struct TrieNode *root, const char *key);
+void energyUpdateTrie(struct TrieNode *root, const char *key, const uint64_t energy);
+uint64_t getEnergyTrie(struct TrieNode *root, const char *key);
 
 #endif //TRIE_H
