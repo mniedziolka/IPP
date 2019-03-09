@@ -9,7 +9,7 @@
 struct TrieNode *newNode() {
 	struct TrieNode *node = malloc(sizeof(struct TrieNode));
 	
-	node->energy = 0;
+	node->energy = malloc(sizeof(uint64_t));
 	node->ends_here = 0;
 	for (uint32_t i = 0; i < ALPHABET_SIZE; i++) {
 		node->children[i] = NULL;
@@ -19,7 +19,7 @@ struct TrieNode *newNode() {
 }
 
 
-struct Trienode *getNode(struct TrieNode *root, const char *key) {
+struct TrieNode *getNode(struct TrieNode *root, const char *key) {
 	uint32_t key_length = strlen(key);
 
 	struct TrieNode *node = root;
@@ -39,8 +39,6 @@ void freeTrie(struct TrieNode *node) {
 		for (int i = 0; i < ALPHABET_SIZE; i++) {
 			freeTrie(node->children[i]);
 		}
-		//free(node->energy);
-		//free(node->ends_here);
 		free(node);
 	}
 	//valgrind --leak-check=full  ./q
@@ -64,64 +62,39 @@ void insertTrie(struct TrieNode *root, const char *key) {
 
 
 void removeTrie(struct TrieNode *root, const char *key) {
-	uint32_t key_length = strlen(key);
-
-	struct TrieNode *node = root;
-	for (uint32_t i = 0; i < key_length; i++) {
-		uint32_t curr = key[i] - '0';
-		if (!node->children[curr]) {
-			return;
-		}
-		node = node->children[curr];
-	}
-
-	freeTrie(node);
+	freeTrie(getNode(root, key));
 }
 
 uint8_t validTrie(struct TrieNode *root, const char *key) {
-	uint32_t key_length = strlen(key);
-
-	struct TrieNode *node = root;
-	for (uint32_t i = 0; i < key_length; i++){
-		uint32_t curr = key[i] - '0';
-		if (!node->children[curr]) {
-			return 0;
-		}
-		node = node->children[curr];
+	if (!getNode(root,key)) {
+		return 0;
+	} else {
+		return 1;
 	}
-	return 1;
 }
 
 
-void energyUpdateTrie(struct TrieNode *root, const char *key, const uint64_t energy) {
-	uint32_t key_length = strlen(key);
-
-	struct TrieNode *node = root;
-	for (uint32_t i = 0; i < key_length; i++) {
-		uint32_t curr = key[i] - '0';
-		if (!node->children[curr]) {
-			return;
-		}
-		node = node->children[curr];
-	}
-	node->energy = energy;
+void energyUpdateTrie(struct TrieNode *root, const char *key, uint64_t energy) {
+	getNode(root, key)->energy = &energy; //wskaźnik
 }
 
 
 uint64_t getEnergyTrie(struct TrieNode *root, const char *key) {
-	if (!validTrie(root, key)) {
-		return -1;
-	}
-
-	uint32_t key_length = strlen(key);
-	struct TrieNode *node = root;
-	for (uint32_t i = 0; i < key_length; i++) {
-		uint32_t curr = key[i] - '0';
-		node = node->children[curr];
-	}
-	return node->energy;
+	return *(getNode(root, key)->energy);
 }
 
-void equalTrie(struct TrieNode *root, const char *keyA, const char *keyB) {
 
+void equalTrie(struct TrieNode *root, const char *keyA, const char *keyB) {
+	struct TrieNode *pointerA = getNode(root, keyA), *pointerB = getNode(root, keyB);
+	if (pointerA) {
+		if (pointerB) {
+			uint64_t curr_energy = (*pointerA->energy + *pointerB->energy) / 2;
+			pointerA->energy = &curr_energy;
+			pointerB->energy = pointerA->energy;
+		} else {
+			pointerB->energy = pointerA->energy;
+		}
+	} else {
+		pointerA->energy = pointerB->energy;
+	}
 }

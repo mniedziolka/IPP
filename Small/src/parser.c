@@ -52,7 +52,7 @@ int32_t getCommand(uint32_t n, char *line, char *command[5]) {
 }
 
 
-void parseLine(uint32_t n, char *line) {
+// void parseLine(uint32_t n, char *line) {
 
 
-}
+// }
