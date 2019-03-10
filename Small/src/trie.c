@@ -65,6 +65,7 @@ void removeTrie(struct TrieNode *root, const char *key) {
 	freeTrie(getNode(root, key));
 }
 
+
 uint8_t validTrie(struct TrieNode *root, const char *key) {
 	if (!getNode(root,key)) {
 		return 0;
