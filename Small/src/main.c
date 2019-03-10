@@ -30,7 +30,7 @@ int32_t main() {
                 uint64_t energy = 0;
 
                 uint8_t is_ok = 1;
-
+                printf("Komenda: %d\n", cmd);
                 if (!cmd) {
                     is_ok = 0;
                 } else {
@@ -112,7 +112,6 @@ int32_t main() {
                         case 5:
                             equalTrie(root, historyA, historyB);
                             break;
-
                     }
                 }
                 free(historyA);
