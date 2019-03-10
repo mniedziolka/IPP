@@ -18,7 +18,7 @@ int32_t main() {
 
     int32_t curr_char = getchar();
 
-    struct TrieNode *root = NULL;
+    struct TrieNode *root = newNode();
 
     while (flag == 1 && curr_char != -1) {
     	switch (curr_char) {
@@ -27,7 +27,7 @@ int32_t main() {
     			int32_t cmd = getCommand(n, line, command);
                 uint32_t index = 0;
                 char *historyA = NULL, *historyB = NULL;
-                uint64_t energy;
+                uint64_t energy = 0;
 
                 uint8_t is_ok = 1;
 
@@ -35,14 +35,17 @@ int32_t main() {
                     is_ok = 0;
                 } else {
                     if (cmd == 3 || cmd == 5) {
+                        printf("%c##\n", line[6]);
                         historyA = getHistory(&line[5]);
                         index += 5;
                     }
                     if (cmd == 2 || cmd == 4) {
+                        printf("%c##\n", line[7]);
                         historyA = getHistory(&line[6]);
                         index += 6;
                     }
                     if (cmd == 1) {
+                        printf("%c##\n", line[8]);
                         historyA = getHistory(&line[7]);
                         index += 7;
                     }
@@ -52,12 +55,14 @@ int32_t main() {
                     }
                 }
 
+                uint8_t arg = 2; //liczba argumentów do ENERGY
                 if (is_ok) {
+                    printf("%s<-\n", historyA);
                     index += strlen(historyA) + 1;
+                    printf("%c %c####\n", line[index-1], line[index]);
                     if (cmd == 4) {
                         if (line[index] == '\0') {
-                            printf("NIEMAARGUMENTU2\n");
-                            //printf("%lu\n", getEnergyTrie()) //dodać
+                            arg = 1;
                         } else {
                             energy = getEnergy(&line[index]);
                             if (!energy) {
@@ -79,11 +84,39 @@ int32_t main() {
 
                 if (!is_ok) {
                     callError();
-                    // if (readGarbage()) {
-                    //     flag = 0;
-                    // }
+                } else {
+                    switch (cmd) {
+                        case 1:
+                            insertTrie(root, historyA);
+                            printf("%s\n", "OK");
+                            break;
+                        case 2:
+                            removeTrie(root, historyA);
+                            printf("%s\n", "OK");
+                            break;
+                        case 3:
+                            printf("%s\n", historyA);
+                            if (validTrie(root, historyA)) {
+                                printf("%s\n", "YES");
+                            } else {
+                                printf("%s\n", "NO");
+                            }
+                            break;
+                        case 4:
+                            if (arg == 1) {
+                                printf("%lu\n", getEnergyTrie(root, historyA));
+                            } else {
+                                energyUpdateTrie(root, historyA, energy);
+                            }
+                            break;
+                        case 5:
+                            equalTrie(root, historyA, historyB);
+                            break;
+
+                    }
                 }
-                
+                free(historyA);
+                free(historyB);
                 free(line);
     			is_newline = 1;
     			n = 0;

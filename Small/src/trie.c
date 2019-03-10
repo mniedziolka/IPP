@@ -67,10 +67,11 @@ void removeTrie(struct TrieNode *root, const char *key) {
 
 
 uint8_t validTrie(struct TrieNode *root, const char *key) {
-	if (!getNode(root,key)) {
-		return 0;
-	} else {
+	struct TrieNode *node = getNode(root, key);
+	if (node) {
 		return 1;
+	} else {
+		return 0;
 	}
 }
 
