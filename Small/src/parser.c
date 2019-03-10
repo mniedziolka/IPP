@@ -4,20 +4,18 @@
 #include <string.h>
 
 void callError() {
-	printf("ERROR\n");
+	fprintf(stderr, "%s", "ERROR\n");
 }
 
 
 uint8_t readGarbage() {
-	char garbage;
+	char garbage = getchar();
 
-	if (scanf("%c", &garbage) != 1) {
-		return 1; //EOF reached
-	}
 	while (garbage != '\n') {
-		if (scanf("%c", &garbage) != 1) {
+		if (garbage == -1) {
 			return 1; //EOF reached
 		}
+		garbage = getchar();
 	}
 
 	return 0;
@@ -49,6 +47,10 @@ int32_t getCommand(uint32_t n, char *line, char *command[5]) {
 	}
 
 	return 0;
+}
+
+uint8_t validHistory() {
+	
 }
 
 

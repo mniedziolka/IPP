@@ -6,16 +6,17 @@
 #include "parser.h"
 #include "trie.h"
 
-int main() {
+int32_t main() {
     char *command[5] = {"DECLARE", "REMOVE", "VALID", "ENERGY", "EQUAL"};
 	size_t size_line = 32, n = 0; //n wskazuje na zaostatni
-	char curr_char, *line;
+	char *line;
 	line = malloc(size_line * sizeof(char));
 	assert(line);
 
 	uint8_t is_newline = 1, flag = 1; //is EOF reached in while
 
-    while (flag == 1 && scanf("%c", &curr_char) == 1) {
+    int32_t curr_char = getchar();
+    while (flag == 1 && curr_char != -1) {
     	switch (curr_char) {
     		case '\n':
                 ; //poprawic
@@ -28,13 +29,17 @@ int main() {
                 if (!cmd) {
                     callError();
                     readGarbage();
-                    break;
+                } else {
+                    
                 }
+                
+                free(line);
     			is_newline = 1;
     			n = 0;
     			size_line = 32;
     			line = malloc(size_line * sizeof(char));
 				assert(line);
+                curr_char = getchar();
     			break;
 
     		case '#':
@@ -45,11 +50,13 @@ int main() {
                 if (readGarbage() == 1) {
                     flag = 0;
                 }
+                free(line);
                 is_newline = 1;
                 n = 0;
                 size_line = 32;
                 line = malloc(size_line * sizeof(char));
                 assert(line);
+                curr_char = getchar();
     			break;
 
     		default:
@@ -66,12 +73,14 @@ int main() {
     				if (readGarbage() == 1) {
     					flag = 0;
     				}
+                    free(line);
     				is_newline = 1;
     				n = 0;
     				size_line = 32;
     				line = malloc(size_line * sizeof(char));
                     assert(line);
     			}
+                curr_char = getchar();
     			break;
     	}
     }
