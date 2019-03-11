@@ -1,8 +1,16 @@
 CC=gcc
-CFLAGS=-Wall -Wextra -std=c11 -O2 -g
+CFLAGS=-Wall -Wextra -std=c11 -O2
+VPATH=src:inc
 
-all:
-	$(CC) $(CFLAGS) -o quantization -I inc src/*
+all: quantization
+
+quantization: parser.o trie.o main.o
+	$(CC) $(CFLAGS) -o $@ $^
+
+.c.o:
+	$(CC) $(CFLAGS) -I inc -c $<
 
 clean:
-	rm -rf quantization
+	rm -rf quantization *.o
+
+.PHONY: all clean
