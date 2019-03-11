@@ -21,7 +21,7 @@ struct TrieNode *newNode() {
 
 struct TrieNode *getNode(struct TrieNode *root, const char *key) {
 	uint32_t key_length = strlen(key);
-
+	printf("%u dlugosc\n", key_length);
 	struct TrieNode *node = root;
 	for (uint32_t i = 0; i < key_length; i++){
 		uint32_t curr = key[i] - '0';
@@ -39,8 +39,9 @@ struct TrieNode *getNode(struct TrieNode *root, const char *key) {
 
 
 void freeTrie(struct TrieNode *node) {
-	if (!node) {
-		for (int i = 0; i < ALPHABET_SIZE; i++) {
+	if (node) {
+		for (uint32_t i = 0; i < ALPHABET_SIZE; i++) {
+			//printf("%u<<<<\n", i);
 			freeTrie(node->children[i]);
 			node->children[i] = NULL;
 		}
@@ -66,9 +67,14 @@ void insertTrie(struct TrieNode *root, const char *key) {
 	node->ends_here = 1;
 }
 
-
-void removeTrie(struct TrieNode *root, const char *key) {
-	freeTrie(getNode(root, key));
+//usuwam wszystko od wierzchołka w dół, a potem ścieżkę do niego
+void removeTrie(struct TrieNode *root, char *key) {
+	uint32_t index_last = strlen(key) - 1;
+	char last = key[index_last];
+	key[index_last] = '\0';
+	struct TrieNode *node = getNode(root, key);
+	freeTrie(node->children[last-'0']);
+	node->children[last-'0'] = NULL;
 }
 
 
