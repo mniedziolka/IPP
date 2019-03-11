@@ -60,19 +60,20 @@ char *getHistory(char *line) {
 
 	for (uint32_t i = 0; i < strlen(line); i++) {
 		if ('0' <= line[i] && line[i] <= '3') {
-			if (curr == size_history) {
+			if (curr == size_history - 1) {
 				size_history *= 2;
 				history = realloc(history, size_history * sizeof(char));
 			}
 			history[curr] = line[i];
 			curr++;
 		} else if (line[i] == ' ') {
+			history[curr] = '\0';
 			return history;
 		} else {
 			return NULL;
 		}
 	}
-
+	history[curr] = '\0';
 	return history;
 }
 

@@ -25,10 +25,14 @@ struct TrieNode *getNode(struct TrieNode *root, const char *key) {
 	struct TrieNode *node = root;
 	for (uint32_t i = 0; i < key_length; i++){
 		uint32_t curr = key[i] - '0';
+		printf("%u<--\n", curr);
 		if (!node->children[curr]) {
-			return node->children[curr];
+			return NULL;
 		}
 		node = node->children[curr];
+	}
+	if (node) {
+		printf("ZWRACAMSENSOWNIE\n");
 	}
 	return node;
 }
@@ -38,7 +42,9 @@ void freeTrie(struct TrieNode *node) {
 	if (!node) {
 		for (int i = 0; i < ALPHABET_SIZE; i++) {
 			freeTrie(node->children[i]);
+			node->children[i] = NULL;
 		}
+		node = NULL;
 		free(node);
 	}
 	//valgrind --leak-check=full  ./q
@@ -68,11 +74,7 @@ void removeTrie(struct TrieNode *root, const char *key) {
 
 uint8_t validTrie(struct TrieNode *root, const char *key) {
 	struct TrieNode *node = getNode(root, key);
-	if (node) {
-		return 1;
-	} else {
-		return 0;
-	}
+	return (node != NULL);
 }
 
 

@@ -28,24 +28,21 @@ int32_t main() {
                 uint32_t index = 0;
                 char *historyA = NULL, *historyB = NULL;
                 uint64_t energy = 0;
-
+                line[n] = '\0';
                 uint8_t is_ok = 1;
                 printf("Komenda: %d\n", cmd);
                 if (!cmd) {
                     is_ok = 0;
                 } else {
                     if (cmd == 3 || cmd == 5) {
-                        printf("%c##\n", line[6]);
                         historyA = getHistory(&line[5]);
                         index += 5;
                     }
                     if (cmd == 2 || cmd == 4) {
-                        printf("%c##\n", line[7]);
                         historyA = getHistory(&line[6]);
                         index += 6;
                     }
                     if (cmd == 1) {
-                        printf("%c##\n", line[8]);
                         historyA = getHistory(&line[7]);
                         index += 7;
                     }
@@ -95,7 +92,7 @@ int32_t main() {
                             printf("%s\n", "OK");
                             break;
                         case 3:
-                            printf("%s\n", historyA);
+                            printf("%d\n", validTrie(root, historyA));
                             if (validTrie(root, historyA)) {
                                 printf("%s\n", "YES");
                             } else {
