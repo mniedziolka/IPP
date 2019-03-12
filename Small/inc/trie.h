@@ -1,12 +1,14 @@
 #ifndef TRIE_H
 #define TRIE_H
 
+#include "findunion.h"
+
 #define ALPHABET_SIZE 4
 
 struct TrieNode {
 	struct TrieNode *children[ALPHABET_SIZE];
-	uint8_t ends_here;
-	uint64_t *energy; //reprezentant
+	uint8_t non_zero_energy;
+	struct FUNode *rep_energy; //reprezentant
 };
 
 struct TrieNode *newNode();

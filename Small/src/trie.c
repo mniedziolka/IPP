@@ -3,14 +3,15 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "findunion.h"
 #include "trie.h"
 
 
 struct TrieNode *newNode() {
 	struct TrieNode *node = malloc(sizeof(struct TrieNode));
 	
-	node->energy = malloc(sizeof(uint64_t));
-	node->ends_here = 0;
+	node->rep_energy = malloc(sizeof(struct FUNode));
+	node->non_zero_energy = 0;
 	for (uint32_t i = 0; i < ALPHABET_SIZE; i++) {
 		node->children[i] = NULL;
 	}
@@ -35,6 +36,7 @@ struct TrieNode *getNode(struct TrieNode *root, const char *key) {
 
 
 void freeTrie(struct TrieNode *node) {
+	//dodać poprawne usuwanie nodów z FU
 	if (node) {
 		for (uint32_t i = 0; i < ALPHABET_SIZE; i++) {
 			freeTrie(node->children[i]);
@@ -59,7 +61,6 @@ void insertTrie(struct TrieNode *root, const char *key) {
 		node = node->children[curr];
 	}
 
-	node->ends_here = 1;
 }
 
 //usuwam wszystko od wierzchołka w dół, a potem ścieżkę do niego
@@ -80,26 +81,20 @@ uint8_t validTrie(struct TrieNode *root, const char *key) {
 
 
 void energyUpdateTrie(struct TrieNode *root, const char *key, uint64_t energy) {
-	getNode(root, key)->energy = &energy; //wskaźnik
+	struct TrieNode *node = getNode(root, key);
+	node->non_zero_energy = 1;
+	findRepresentative(node->rep_energy)->energy = energy;
 }
 
 
 uint64_t getEnergyTrie(struct TrieNode *root, const char *key) {
-	return *(getNode(root, key)->energy);
+	struct TrieNode *node = getNode(root, key);
+	return findRepresentative(node->rep_energy)->energy;
 }
 
 
 void equalTrie(struct TrieNode *root, const char *keyA, const char *keyB) {
-	struct TrieNode *pointerA = getNode(root, keyA), *pointerB = getNode(root, keyB);
-	if (pointerA) {
-		if (pointerB) {
-			uint64_t curr_energy = (*pointerA->energy + *pointerB->energy) / 2;
-			pointerA->energy = &curr_energy;
-			pointerB->energy = pointerA->energy;
-		} else {
-			pointerB->energy = pointerA->energy;
-		}
-	} else {
-		pointerA->energy = pointerB->energy;
-	}
+	struct TrieNode *nodeA = getNode(root, keyA);
+	struct TrieNode *nodeB = getNode(root, keyB);
+	unionNodes(nodeA->rep_energy, nodeB->rep_energy);
 }
