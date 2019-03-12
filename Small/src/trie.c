@@ -21,19 +21,15 @@ struct TrieNode *newNode() {
 
 struct TrieNode *getNode(struct TrieNode *root, const char *key) {
 	uint32_t key_length = strlen(key);
-	printf("%u dlugosc\n", key_length);
 	struct TrieNode *node = root;
 	for (uint32_t i = 0; i < key_length; i++){
 		uint32_t curr = key[i] - '0';
-		printf("%u<--\n", curr);
 		if (!node->children[curr]) {
 			return NULL;
 		}
 		node = node->children[curr];
 	}
-	if (node) {
-		printf("ZWRACAMSENSOWNIE\n");
-	}
+
 	return node;
 }
 
@@ -41,7 +37,6 @@ struct TrieNode *getNode(struct TrieNode *root, const char *key) {
 void freeTrie(struct TrieNode *node) {
 	if (node) {
 		for (uint32_t i = 0; i < ALPHABET_SIZE; i++) {
-			//printf("%u<<<<\n", i);
 			freeTrie(node->children[i]);
 			node->children[i] = NULL;
 		}
