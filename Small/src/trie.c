@@ -38,6 +38,7 @@ struct TrieNode *getNode(struct TrieNode *root, const char *key) {
 void freeTrie(struct TrieNode *node) {
 	//dodać poprawne usuwanie nodów z FU
 	if (node) {
+		node->rep_energy->size--;
 		for (uint32_t i = 0; i < ALPHABET_SIZE; i++) {
 			freeTrie(node->children[i]);
 			node->children[i] = NULL;
@@ -65,6 +66,7 @@ void insertTrie(struct TrieNode *root, const char *key) {
 
 //usuwam wszystko od wierzchołka w dół, a potem ścieżkę do niego
 void removeTrie(struct TrieNode *root, char *key) {
+	//blef
 	uint32_t index_last = strlen(key) - 1;
 	char last = key[index_last];
 	key[index_last] = '\0';
@@ -82,14 +84,28 @@ uint8_t validTrie(struct TrieNode *root, const char *key) {
 
 void energyUpdateTrie(struct TrieNode *root, const char *key, uint64_t energy) {
 	struct TrieNode *node = getNode(root, key);
-	node->non_zero_energy = 1;
-	findRepresentative(node->rep_energy)->energy = energy;
+	if (node->non_zero_energy) {
+		findRepresentative(node->rep_energy)->energy = energy;
+	} else {
+		node->non_zero_energy = 1;
+		struct FUNode *temp = NULL;
+		temp->size = 1;
+		temp->energy = energy;
+		temp->rep = temp;
+		node->rep_energy = temp;
+	}
+	
 }
 
 
 uint64_t getEnergyTrie(struct TrieNode *root, const char *key) {
 	struct TrieNode *node = getNode(root, key);
-	return findRepresentative(node->rep_energy)->energy;
+	if (node->non_zero_energy) {
+		return findRepresentative(node->rep_energy)->energy;
+	} else {
+		return 0;
+	}
+	
 }
 
 

@@ -101,7 +101,12 @@ int32_t main() {
                             break;
                         case 4:
                             if (arg == 1) {
-                                printf("%lu\n", getEnergyTrie(root, historyA));
+                                uint64_t energy = getEnergyTrie(root, historyA);
+                                if (energy == 0) {
+                                    callError();
+                                } else {
+                                    printf("%lu\n", energy);
+                                }
                             } else {
                                 energyUpdateTrie(root, historyA, energy);
                             }
