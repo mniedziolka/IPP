@@ -9,5 +9,5 @@ struct FUNode {
 
 struct FUNode *findRepresentative(struct FUNode *node);
 void unionNodes(struct FUNode *nodeA, struct FUNode *nodeB);
-
+void freeFU(struct FUNode *node);
 #endif //FINDUNION_H

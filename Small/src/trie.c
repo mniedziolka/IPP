@@ -44,10 +44,12 @@ struct TrieNode *getNode(struct TrieNode *root, const char *key) {
 void freeTrie(struct TrieNode *node) {
 	//dodać poprawne usuwanie nodów z FU
 	if (node) {
-		node->rep_energy->size--;
 		for (uint32_t i = 0; i < ALPHABET_SIZE; i++) {
 			freeTrie(node->children[i]);
 			node->children[i] = NULL;
+		}
+		if (node->non_zero_energy) {
+			freeFU(node->rep_energy);
 		}
 		node = NULL;
 		free(node);
@@ -105,7 +107,8 @@ uint8_t energyUpdateTrie(struct TrieNode *root, const char *key, uint64_t energy
 
 uint64_t getEnergyTrie(struct TrieNode *root, const char *key) {
 	struct TrieNode *node = getNode(root, key);
-	if (node->non_zero_energy) {
+
+	if (node && node->non_zero_energy) {
 		return findRepresentative(node->rep_energy)->energy;
 	} else {
 		return 0;
@@ -119,6 +122,9 @@ uint8_t equalTrie(struct TrieNode *root, const char *keyA, const char *keyB) {
 	struct TrieNode *nodeB = getNode(root, keyB);
 	if (nodeA == NULL || nodeB == NULL) {
 		return 0;
+	}
+	if (!nodeA->non_zero_energy && !nodeB->non_zero_energy) {
+		return 0; //jeśli obie nie mają energii
 	}
 	nodeA->non_zero_energy = 1;
 	nodeB->non_zero_energy = 1;

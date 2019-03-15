@@ -63,3 +63,15 @@ void unionNodes(struct FUNode *nodeA, struct FUNode *nodeB) {
 		}
 	}
 }
+
+void freeFU(struct FUNode *node) {
+	if (node->size <= 1) {
+		if (node->rep != node) {
+			freeFU(node->rep);
+		}
+		node->rep = NULL;
+		free(node);
+	} else {
+		node->size--;
+	}
+}

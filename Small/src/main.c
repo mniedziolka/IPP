@@ -55,9 +55,12 @@ int32_t main() {
 
                     uint8_t arg = 2; //liczba argumentów do ENERGY
                     if (is_ok) {
-                        //printf("%s<-\n", historyA);
                         index += strlen(historyA) + 1;
-                        // printf("%c %c####\n", line[index-1], line[index]);
+                        if (cmd == 1 || cmd == 2 || cmd == 3) {
+                            if (line[index] != '\0') {
+                                is_ok = 0;
+                            }
+                        }
                         if (cmd == 4) {
                             if (line[index] == '\0') {
                                 arg = 1;
@@ -74,7 +77,10 @@ int32_t main() {
                             if (!historyB) {
                                 is_ok = 0;
                             }
-                            //printf("%s\n", historyB);
+                            index += strlen(historyB) + 1;
+                            if (line[index] != '\0') {
+                                is_ok = 0;
+                            }
                         }
                     }
 
