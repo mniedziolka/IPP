@@ -1,5 +1,5 @@
 CC=gcc
-CFLAGS=-Wall -Wextra -std=c11 -O2
+CFLAGS=-Wall -Wextra -std=c11 -O2 -g
 VPATH=src:inc
 
 all: quantization

@@ -84,7 +84,7 @@ uint64_t getEnergy(char *line) {
 	}
 	line++;
 	uint64_t size = 0;
-	while (line) {
+	while (*line != '\0') {
 		if ('0' <= *line && *line <= '9' && (UINT64_MAX - *line + '0') / 10 >= size) {
 			size = size * 10 + *line - '0';
 		} else {

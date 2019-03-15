@@ -16,6 +16,12 @@ struct TrieNode *newNode() {
 		node->children[i] = NULL;
 	}
 
+	struct FUNode *temp = malloc(sizeof(struct FUNode));
+	temp->size = 1;
+	temp->energy = 0;
+	temp->rep = temp;
+	node->rep_energy = temp;
+
 	return node;
 }
 
@@ -66,13 +72,15 @@ void insertTrie(struct TrieNode *root, const char *key) {
 
 //usuwam wszystko od wierzchołka w dół, a potem ścieżkę do niego
 void removeTrie(struct TrieNode *root, char *key) {
-	//blef
 	uint32_t index_last = strlen(key) - 1;
 	char last = key[index_last];
 	key[index_last] = '\0';
 	struct TrieNode *node = getNode(root, key);
-	freeTrie(node->children[last-'0']);
-	node->children[last-'0'] = NULL;
+	if (node) {
+		//printf("%c\t%d", last, last - '0');
+		freeTrie(node->children[last-'0']);
+		node->children[last-'0'] = NULL;
+	}
 }
 
 
@@ -82,19 +90,16 @@ uint8_t validTrie(struct TrieNode *root, const char *key) {
 }
 
 
-void energyUpdateTrie(struct TrieNode *root, const char *key, uint64_t energy) {
+uint8_t energyUpdateTrie(struct TrieNode *root, const char *key, uint64_t energy) {
 	struct TrieNode *node = getNode(root, key);
-	if (node->non_zero_energy) {
-		findRepresentative(node->rep_energy)->energy = energy;
-	} else {
-		node->non_zero_energy = 1;
-		struct FUNode *temp = NULL;
-		temp->size = 1;
-		temp->energy = energy;
-		temp->rep = temp;
-		node->rep_energy = temp;
+	if (!node) {
+		return 0;
 	}
 	
+	node->non_zero_energy = 1;
+	findRepresentative(node->rep_energy)->energy = energy;
+
+	return 1;
 }
 
 
@@ -109,8 +114,15 @@ uint64_t getEnergyTrie(struct TrieNode *root, const char *key) {
 }
 
 
-void equalTrie(struct TrieNode *root, const char *keyA, const char *keyB) {
+uint8_t equalTrie(struct TrieNode *root, const char *keyA, const char *keyB) {
 	struct TrieNode *nodeA = getNode(root, keyA);
 	struct TrieNode *nodeB = getNode(root, keyB);
+	if (nodeA == NULL || nodeB == NULL) {
+		return 0;
+	}
+	nodeA->non_zero_energy = 1;
+	nodeB->non_zero_energy = 1;
 	unionNodes(nodeA->rep_energy, nodeB->rep_energy);
+
+	return 1;
 }

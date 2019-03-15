@@ -8,12 +8,14 @@ fi
 prog=$1
 dir=$2
 
-if [ ! -f quantization ]; then
+if [ ! -x ${prog} ]; then
 	echo "Run make first!"
 	exit 2
 fi
 
 for file in ${dir}/*.in
 do
-	./quantization < ${f} > ${f%in}out
+	./${prog} < ${file} 1>${file%in}myout 2>${file%in}myerr
+	diff ${file%in}out ${file%in}myout 1>/dev/null 2>&1 || break
+	diff ${file%in}err ${file%in}myerr 1>/dev/null 2>&1 || break
 done

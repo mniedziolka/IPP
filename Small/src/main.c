@@ -21,110 +21,120 @@ int32_t main() {
     struct TrieNode *root = newNode();
 
     while (flag == 1 && curr_char != -1) {
+        //printf("%s\n", line);
     	switch (curr_char) {
     		case '\n':
-                ; //poprawic
-    			int32_t cmd = getCommand(n, line, command);
-                uint32_t index = 0;
-                char *historyA = NULL, *historyB = NULL;
-                uint64_t energy = 0;
-                line[n] = '\0';
-                uint8_t is_ok = 1;
-                printf("Komenda: %d\n", cmd);
-                if (!cmd) {
-                    is_ok = 0;
-                } else {
-                    if (cmd == 3 || cmd == 5) {
-                        historyA = getHistory(&line[5]);
-                        index += 5;
-                    }
-                    if (cmd == 2 || cmd == 4) {
-                        historyA = getHistory(&line[6]);
-                        index += 6;
-                    }
-                    if (cmd == 1) {
-                        historyA = getHistory(&line[7]);
-                        index += 7;
-                    }
-
-                    if (!historyA) {
+                if (n != 0) {
+                    int32_t cmd = getCommand(n, line, command);
+                    uint32_t index = 0;
+                    char *historyA = NULL, *historyB = NULL;
+                    uint64_t energy = 0;
+                    line[n] = '\0';
+                    uint8_t is_ok = 1;
+                    //printf("Komenda: %d\n", cmd);
+                    if (!cmd) {
                         is_ok = 0;
-                    }
-                }
-
-                uint8_t arg = 2; //liczba argumentów do ENERGY
-                if (is_ok) {
-                    printf("%s<-\n", historyA);
-                    index += strlen(historyA) + 1;
-                    printf("%c %c####\n", line[index-1], line[index]);
-                    if (cmd == 4) {
-                        if (line[index] == '\0') {
-                            arg = 1;
-                        } else {
-                            energy = getEnergy(&line[index]);
-                            if (!energy) {
-                                is_ok = 0;
-                            } else {
-                                printf("%lu\n", energy);
-                            }
+                    } else {
+                        if (cmd == 3 || cmd == 5) {
+                            historyA = getHistory(&line[5]);
+                            index += 5;
                         }
-                    }
+                        if (cmd == 2 || cmd == 4) {
+                            historyA = getHistory(&line[6]);
+                            index += 6;
+                        }
+                        if (cmd == 1) {
+                            historyA = getHistory(&line[7]);
+                            index += 7;
+                        }
 
-                    if (cmd == 5) {
-                        historyB = getHistory(&line[index]);
-                        if (!historyB) {
+                        if (!historyA) {
                             is_ok = 0;
                         }
-                        printf("%s\n", historyB);
                     }
+
+                    uint8_t arg = 2; //liczba argumentów do ENERGY
+                    if (is_ok) {
+                        //printf("%s<-\n", historyA);
+                        index += strlen(historyA) + 1;
+                        // printf("%c %c####\n", line[index-1], line[index]);
+                        if (cmd == 4) {
+                            if (line[index] == '\0') {
+                                arg = 1;
+                            } else {
+                                energy = getEnergy(&line[index]);
+                                if (!energy) {
+                                    is_ok = 0;
+                                }
+                            }
+                        }
+
+                        if (cmd == 5) {
+                            historyB = getHistory(&line[index]);
+                            if (!historyB) {
+                                is_ok = 0;
+                            }
+                            //printf("%s\n", historyB);
+                        }
+                    }
+
+                    if (!is_ok) {
+                        callError();
+                    } else {
+                        switch (cmd) {
+                            case 1:
+                                insertTrie(root, historyA);
+                                printf("%s\n", "OK");
+                                break;
+                            case 2:
+                                removeTrie(root, historyA);
+                                printf("%s\n", "OK");
+                                break;
+                            case 3:
+                                //printf("%d\n", validTrie(root, historyA));
+                                if (validTrie(root, historyA)) {
+                                    printf("%s\n", "YES");
+                                } else {
+                                    printf("%s\n", "NO");
+                                }
+                                break;
+                            case 4:
+                                if (arg == 1) {
+                                    uint64_t energy = getEnergyTrie(root, historyA);
+                                    if (energy == 0) {
+                                        callError();
+                                    } else {
+                                        printf("%lu\n", energy);
+                                    }
+                                } else {
+                                    if (energyUpdateTrie(root, historyA, energy)) {
+                                        printf("%s\n", "OK");
+                                    } else {
+                                        callError();
+                                    }
+                                }
+                                break;
+                            case 5:
+                                if (equalTrie(root, historyA, historyB)) {
+                                    printf("%s\n", "OK");
+                                } else {
+                                    callError();
+                                }
+                                break;
+                        }
+                    }
+                    free(historyA);
+                    free(historyB);
                 }
 
-                if (!is_ok) {
-                    callError();
-                } else {
-                    switch (cmd) {
-                        case 1:
-                            insertTrie(root, historyA);
-                            printf("%s\n", "OK");
-                            break;
-                        case 2:
-                            removeTrie(root, historyA);
-                            printf("%s\n", "OK");
-                            break;
-                        case 3:
-                            printf("%d\n", validTrie(root, historyA));
-                            if (validTrie(root, historyA)) {
-                                printf("%s\n", "YES");
-                            } else {
-                                printf("%s\n", "NO");
-                            }
-                            break;
-                        case 4:
-                            if (arg == 1) {
-                                uint64_t energy = getEnergyTrie(root, historyA);
-                                if (energy == 0) {
-                                    callError();
-                                } else {
-                                    printf("%lu\n", energy);
-                                }
-                            } else {
-                                energyUpdateTrie(root, historyA, energy);
-                            }
-                            break;
-                        case 5:
-                            equalTrie(root, historyA, historyB);
-                            break;
-                    }
-                }
-                free(historyA);
-                free(historyB);
+    			
+                
                 free(line);
     			is_newline = 1;
     			n = 0;
     			size_line = 32;
     			line = malloc(size_line * sizeof(char));
 				assert(line);
-                curr_char = getchar();
     			break;
 
     		case '#':
@@ -141,7 +151,6 @@ int32_t main() {
                 size_line = 32;
                 line = malloc(size_line * sizeof(char));
                 assert(line);
-                curr_char = getchar();
     			break;
 
     		default:
@@ -165,9 +174,9 @@ int32_t main() {
     				line = malloc(size_line * sizeof(char));
                     assert(line);
     			}
-                curr_char = getchar();
     			break;
     	}
+        curr_char = getchar();
     }
 
     //Pamietaj zwolnic pamiec
