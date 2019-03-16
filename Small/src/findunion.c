@@ -7,22 +7,23 @@
 
 struct FUNode *findRepresentative(struct FUNode *node) {
 	//printf("%p---\n", node);
+
 	if (node->rep == node) {
 		return node;
 	}
 
 	struct FUNode *curr = node->rep;
-
-	node->rep->size--;
+	curr->size--;
 	node->rep = findRepresentative(node->rep);
 	node->rep->size++;
 	
-
 	if (curr->size == 0) { 
 		//jeśli nic nie wskazuje na wierzchołek zwolnij
 		curr->rep = NULL;
 		free(curr);
 	}
+
+	
 
 	return node->rep;
 }

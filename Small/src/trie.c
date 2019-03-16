@@ -10,7 +10,6 @@
 struct TrieNode *newNode() {
 	struct TrieNode *node = malloc(sizeof(struct TrieNode));
 	
-	node->rep_energy = malloc(sizeof(struct FUNode));
 	node->non_zero_energy = 0;
 	for (uint32_t i = 0; i < ALPHABET_SIZE; i++) {
 		node->children[i] = NULL;
@@ -20,6 +19,7 @@ struct TrieNode *newNode() {
 	temp->size = 1;
 	temp->energy = 0;
 	temp->rep = temp;
+
 	node->rep_energy = temp;
 
 	return node;
@@ -48,10 +48,7 @@ void freeTrie(struct TrieNode *node) {
 			freeTrie(node->children[i]);
 			node->children[i] = NULL;
 		}
-		if (node->non_zero_energy) {
-			freeFU(node->rep_energy);
-		}
-		node = NULL;
+		freeFU(node->rep_energy);
 		free(node);
 	}
 	//valgrind --leak-check=full  ./q
