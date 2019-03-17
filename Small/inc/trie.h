@@ -13,7 +13,7 @@ struct TrieNode {
 
 struct TrieNode *newNode();
 void freeTrie(struct TrieNode *node);
-void insertTrie(struct TrieNode *root, const char *key);
+uint8_t insertTrie(struct TrieNode *root, const char *key);
 void removeTrie(struct TrieNode *root, char *key);
 uint8_t validTrie(struct TrieNode *root, const char *key);
 uint8_t energyUpdateTrie(struct TrieNode *root, const char *key, const uint64_t energy);

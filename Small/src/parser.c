@@ -3,10 +3,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-void callError() {
-	fprintf(stderr, "%s", "ERROR\n");
-}
-
 
 uint8_t readGarbage() {
 	char garbage = getchar();
@@ -51,18 +47,29 @@ int32_t getCommand(uint32_t n, char *line, char *command[5]) {
 
 
 char *getHistory(char *line) {
-	if (line[0] != ' ') {
-		return NULL;
-	}
-	line++;
 	size_t size_history = 32, curr = 0;
 	char *history = malloc(size_history * sizeof(char));
+	if (!history) {
+		free(history);
+		return NULL;
+	}
+
+	if (line[0] != ' ') {
+		*history = '\0';
+		return history;
+	}
+	line++;
 
 	for (uint32_t i = 0; i < strlen(line); i++) {
 		if ('0' <= line[i] && line[i] <= '3') {
 			if (curr == size_history - 1) {
 				size_history *= 2;
-				history = realloc(history, size_history * sizeof(char));
+				char *temp = realloc(history, size_history * sizeof(char));
+				if (!temp) {
+					free(history);
+					return NULL;
+				}
+				history = temp;
 			}
 			history[curr] = line[i];
 			curr++;
@@ -70,8 +77,9 @@ char *getHistory(char *line) {
 			history[curr] = '\0';
 			return history;
 		} else {
-			free(history);
-			return NULL;
+			//zwróć pustą historię dla błędu
+			*history = '\0';
+			return history;
 		}
 	}
 	history[curr] = '\0';

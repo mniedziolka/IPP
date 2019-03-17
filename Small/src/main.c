@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "error.h"
 #include "parser.h"
 #include "trie.h"
 
@@ -11,7 +12,8 @@ int32_t main() {
 	size_t size_line = 32, n = 0; //n wskazuje na zaostatni
 	char *line = malloc(size_line * sizeof(char));
 	if (!line) {
-        exit(1);
+        printf("CHUJ1");
+        memoryError(line, NULL, NULL, NULL);
     }
 
 	uint8_t is_newline = 1, flag = 1; //is EOF reached in while
@@ -48,7 +50,12 @@ int32_t main() {
                             index += 7;
                         }
 
-                        if (!historyA || strlen(historyA) == 0) {
+                        if (historyA == NULL) {
+                            printf("CHUJ2");
+                            memoryError(line, root, NULL, NULL);
+                        }
+
+                        if (strlen(historyA) == 0) {
                             is_ok = 0;
                         }
                     }
@@ -74,7 +81,10 @@ int32_t main() {
 
                         if (cmd == 5) {
                             historyB = getHistory(&line[index]);
-                            if (!historyB || strlen(historyB) == 0) {
+                            if (!historyB) {
+                                memoryError(line, root, historyA, NULL);
+                            }
+                            if (strlen(historyB) == 0) {
                                 is_ok = 0;
                             }
                             index += strlen(historyB) + 1;
@@ -89,8 +99,11 @@ int32_t main() {
                     } else {
                         switch (cmd) {
                             case 1:
-                                insertTrie(root, historyA);
-                                printf("%s\n", "OK");
+                                if (insertTrie(root, historyA)) {
+                                    printf("%s\n", "OK");
+                                } else {
+                                    memoryError(line, root, historyA, historyB);
+                                }
                                 break;
                             case 2:
                                 removeTrie(root, historyA);
@@ -146,7 +159,7 @@ int32_t main() {
     			size_line = 32;
     			line = malloc(size_line * sizeof(char));
 				if (!line) {
-                    exit(1);
+                    memoryError(line, root, NULL, NULL);
                 }
     			break;
 
@@ -165,7 +178,7 @@ int32_t main() {
                 size_line = 32;
                 line = malloc(size_line * sizeof(char));
                 if (!line) {
-                    exit(1);
+                    memoryError(line, root, NULL, NULL);
                 }
     			break;
 
@@ -176,7 +189,7 @@ int32_t main() {
     					size_line *= 2;
                         char *temp = realloc(line, size_line * sizeof(char));
                         if (!temp) {
-                            exit(1);
+                            memoryError(line, root, NULL, NULL);
                         }
     					line = temp;    				
                     }
@@ -193,7 +206,7 @@ int32_t main() {
     				size_line = 32;
     				line = malloc(size_line * sizeof(char));
                     if (!line) {
-                        exit(1);
+                        memoryError(line, root, NULL, NULL);
                     }
     			}
     			break;

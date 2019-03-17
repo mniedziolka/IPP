@@ -10,7 +10,7 @@
 struct TrieNode *newNode() {
 	struct TrieNode *node = malloc(sizeof(struct TrieNode));
 	if (!node) {
-		exit(1);
+		return NULL;
 	}
 	node->non_zero_energy = 0;
 	for (uint32_t i = 0; i < ALPHABET_SIZE; i++) {
@@ -19,7 +19,7 @@ struct TrieNode *newNode() {
 
 	struct FUNode *temp = malloc(sizeof(struct FUNode));
 	if (!temp) {
-		exit(1);
+		return NULL;
 	}
 	temp->indeg = 1;
 	temp->energy = 0;
@@ -58,18 +58,24 @@ void freeTrie(struct TrieNode *node) {
 }
 
 
-void insertTrie(struct TrieNode *root, const char *key) {
+uint8_t insertTrie(struct TrieNode *root, const char *key) {
 	uint32_t key_length = strlen(key);
 
 	struct TrieNode *node = root;
 	for (uint32_t i = 0; i < key_length; i++) {
 		uint32_t curr = key[i] - '0';
 		if (!node->children[curr]) {
-			node->children[curr] = newNode();
+			struct TrieNode *temp = newNode();
+			if (temp) {
+				node->children[curr] = temp;
+			} else {
+				return 0;
+			}
 		}
 		node = node->children[curr];
 	}
 
+	return 1;
 }
 
 //usuwam wszystko od wierzchołka w dół, a potem ścieżkę do niego

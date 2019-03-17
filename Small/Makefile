@@ -4,7 +4,7 @@ VPATH=src:inc
 
 all: quantization
 
-quantization: parser.o trie.o main.o findunion.o
+quantization: parser.o trie.o main.o findunion.o error.o
 	$(CC) $(CFLAGS) -o $@ $^
 
 .c.o:
