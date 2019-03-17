@@ -1,4 +1,3 @@
-#include <assert.h>
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -10,9 +9,10 @@
 int32_t main() {
     char *command[5] = {"DECLARE", "REMOVE", "VALID", "ENERGY", "EQUAL"};
 	size_t size_line = 32, n = 0; //n wskazuje na zaostatni
-	char *line;
-	line = malloc(size_line * sizeof(char));
-	assert(line);
+	char *line = malloc(size_line * sizeof(char));
+	if (!line) {
+        exit(1);
+    }
 
 	uint8_t is_newline = 1, flag = 1; //is EOF reached in while
 
@@ -20,18 +20,18 @@ int32_t main() {
 
     struct TrieNode *root = newNode();
 
+    //dopóki nie napotkamy EOF
     while (flag == 1 && curr_char != -1) {
-        //printf("%s\n", line);
     	switch (curr_char) {
     		case '\n':
                 if (n != 0) {
                     int32_t cmd = getCommand(n, line, command);
-                    uint32_t index = 0;
+                    uint32_t index = 0; //aktualny indeks do parsowania linii
                     char *historyA = NULL, *historyB = NULL;
                     uint64_t energy = 0;
                     line[n] = '\0';
                     uint8_t is_ok = 1;
-                    //printf("Komenda: %d\n", cmd);
+
                     if (!cmd) {
                         is_ok = 0;
                     } else {
@@ -48,7 +48,7 @@ int32_t main() {
                             index += 7;
                         }
 
-                        if (!historyA) {
+                        if (!historyA || strlen(historyA) == 0) {
                             is_ok = 0;
                         }
                     }
@@ -74,7 +74,7 @@ int32_t main() {
 
                         if (cmd == 5) {
                             historyB = getHistory(&line[index]);
-                            if (!historyB) {
+                            if (!historyB || strlen(historyB) == 0) {
                                 is_ok = 0;
                             }
                             index += strlen(historyB) + 1;
@@ -129,8 +129,13 @@ int32_t main() {
                                 break;
                         }
                     }
-                    free(historyA);
-                    free(historyB);
+                    if (historyA) {
+                        free(historyA);
+                    }
+
+                    if (historyB) {
+                        free(historyB);
+                    }
                 }
 
     			
@@ -140,7 +145,9 @@ int32_t main() {
     			n = 0;
     			size_line = 32;
     			line = malloc(size_line * sizeof(char));
-				assert(line);
+				if (!line) {
+                    exit(1);
+                }
     			break;
 
     		case '#':
@@ -151,21 +158,28 @@ int32_t main() {
                 if (readGarbage() == 1) {
                     flag = 0;
                 }
+
                 free(line);
                 is_newline = 1;
                 n = 0;
                 size_line = 32;
                 line = malloc(size_line * sizeof(char));
-                assert(line);
+                if (!line) {
+                    exit(1);
+                }
     			break;
 
     		default:
-    			if ( checkChar(curr_char) ) {
+    			if (checkChar(curr_char)) {
                     is_newline = 0;
     				if (n == size_line - 1) {
     					size_line *= 2;
-    					line = realloc(line, size_line * sizeof(char));
-    				}
+                        char *temp = realloc(line, size_line * sizeof(char));
+                        if (!temp) {
+                            exit(1);
+                        }
+    					line = temp;    				
+                    }
     				line[n] = curr_char;
     				n++;
     			} else {
@@ -178,7 +192,9 @@ int32_t main() {
     				n = 0;
     				size_line = 32;
     				line = malloc(size_line * sizeof(char));
-                    assert(line);
+                    if (!line) {
+                        exit(1);
+                    }
     			}
     			break;
     	}

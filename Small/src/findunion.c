@@ -6,24 +6,25 @@
 
 
 struct FUNode *findRepresentative(struct FUNode *node) {
-	//printf("%p---\n", node);
+	//do decyzji, aktualna wersja bez leaka
 
 	if (node->rep == node) {
 		return node;
 	}
+	return findRepresentative(node->rep);
 
-	struct FUNode *curr = node->rep;
-	curr->size--;
-	node->rep = findRepresentative(node->rep);
-	node->rep->size++;
-	
-	if (curr->size == 0) { 
-		//jeśli nic nie wskazuje na wierzchołek zwolnij
-		curr->rep = NULL;
-		free(curr);
-	}
+	//zapamiętaj wierzchołek przed przepięciem
+	// struct FUNode *curr = node->rep;
+	// curr->indeg--;
 
+	//node->rep = findRepresentative(node->rep);
+
+	// node->rep->indeg++;
 	
+	// if (curr->indeg == 0) { 
+	// 	//jeśli nic nie wskazuje na wierzchołek zwolnij
+	// 	free(curr);
+	// }
 
 	return node->rep;
 }
@@ -53,26 +54,28 @@ void unionNodes(struct FUNode *nodeA, struct FUNode *nodeB) {
 	}
 
 	if (rep_nodeA != rep_nodeB) {
-		if (rep_nodeA->size > rep_nodeB->size) {
+		//przepinam wierzchołki z mniejszej na większą
+		if (rep_nodeA->indeg > rep_nodeB->indeg) {
 			rep_nodeA->energy = final_energy;
-			rep_nodeA->size++;
+			rep_nodeA->indeg++;
 			rep_nodeB->rep = rep_nodeA;
 		} else {
 			rep_nodeB->energy = final_energy;
-			rep_nodeB->size++;
+			rep_nodeB->indeg++;
 			rep_nodeA->rep = rep_nodeB;
 		}
 	}
 }
 
+
 void freeFU(struct FUNode *node) {
-	if (node->size <= 1) {
+	if (node->indeg == 1) {
 		if (node->rep != node) {
 			freeFU(node->rep);
 		}
 		node->rep = NULL;
 		free(node);
 	} else {
-		node->size--;
+		node->indeg--;
 	}
 }

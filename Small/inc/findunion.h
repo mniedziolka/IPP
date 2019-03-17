@@ -3,7 +3,7 @@
 
 struct FUNode {
 	struct FUNode *rep;
-	uint32_t size;
+	uint32_t indeg;
 	uint64_t energy;
 };
 

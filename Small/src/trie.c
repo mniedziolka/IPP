@@ -9,14 +9,19 @@
 
 struct TrieNode *newNode() {
 	struct TrieNode *node = malloc(sizeof(struct TrieNode));
-	
+	if (!node) {
+		exit(1);
+	}
 	node->non_zero_energy = 0;
 	for (uint32_t i = 0; i < ALPHABET_SIZE; i++) {
 		node->children[i] = NULL;
 	}
 
 	struct FUNode *temp = malloc(sizeof(struct FUNode));
-	temp->size = 1;
+	if (!temp) {
+		exit(1);
+	}
+	temp->indeg = 1;
 	temp->energy = 0;
 	temp->rep = temp;
 
@@ -42,7 +47,6 @@ struct TrieNode *getNode(struct TrieNode *root, const char *key) {
 
 
 void freeTrie(struct TrieNode *node) {
-	//dodać poprawne usuwanie nodów z FU
 	if (node) {
 		for (uint32_t i = 0; i < ALPHABET_SIZE; i++) {
 			freeTrie(node->children[i]);
@@ -51,7 +55,6 @@ void freeTrie(struct TrieNode *node) {
 		freeFU(node->rep_energy);
 		free(node);
 	}
-	//valgrind --leak-check=full  ./q
 }
 
 

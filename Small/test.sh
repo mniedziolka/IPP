@@ -19,6 +19,7 @@ fi
 
 for file in ${dir}/*.in
 do
+	valgrind --leak-check=full ./${prog} < ${file}
 	./${prog} < ${file} 1>${file%in}myout 2>${file%in}myerr
 	if diff ${file%in}out ${file%in}myout 1>/dev/null 2>&1
 	then 

@@ -70,6 +70,7 @@ char *getHistory(char *line) {
 			history[curr] = '\0';
 			return history;
 		} else {
+			free(history);
 			return NULL;
 		}
 	}
