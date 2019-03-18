@@ -44,13 +44,9 @@ void unionNodes(struct FUNode *nodeA, struct FUNode *nodeB) {
 	if (energyA != 0 && energyB == 0) {
 		final_energy = energyA;
 	}
-
 	if (energyA != 0 && energyB != 0) {
-		//cuda z powodu ryzyka przekroczenia zakresu
-		final_energy = (energyA / 2) + (energyB / 2);
-		if (energyA % 2 == 1 && energyB % 2 == 1) {
-			final_energy++;
-		}
+		//ryzyko overflow uint64
+		final_energy = (energyA / 2) + (energyB / 2) + (energyA % 2 == 1 && energyB % 2 == 1);
 	}
 
 	if (rep_nodeA != rep_nodeB) {
