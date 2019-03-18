@@ -13,19 +13,6 @@ struct FUNode *findRepresentative(struct FUNode *node) {
 	}
 	return findRepresentative(node->rep);
 
-	//zapamiętaj wierzchołek przed przepięciem
-	// struct FUNode *curr = node->rep;
-	// curr->indeg--;
-
-	//node->rep = findRepresentative(node->rep);
-
-	// node->rep->indeg++;
-	
-	// if (curr->indeg == 0) { 
-	// 	//jeśli nic nie wskazuje na wierzchołek zwolnij
-	// 	free(curr);
-	// }
-
 	return node->rep;
 }
 

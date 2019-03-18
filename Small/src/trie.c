@@ -126,6 +126,11 @@ uint8_t equalTrie(struct TrieNode *root, const char *keyA, const int64_t n, cons
 	if (nodeA == NULL || nodeB == NULL) {
 		return 0;
 	}
+
+	if (nodeA == nodeB) {
+		return 1;
+	}
+
 	if (!nodeA->non_zero_energy && !nodeB->non_zero_energy) {
 		return 0; //jeśli obie nie mają energii
 	}

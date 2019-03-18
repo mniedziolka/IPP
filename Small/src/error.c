@@ -10,6 +10,8 @@ void callError() {
 	fprintf(stderr, "%s", "ERROR\n");
 }
 
+
+// Jeśli malloc się nie udał zwolnij pamięć i przerwij z kodem 1.
 void memoryError(char *line, struct TrieNode *root) {
 	free(line);
 	freeTrie(root);

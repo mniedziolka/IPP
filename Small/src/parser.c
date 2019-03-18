@@ -4,12 +4,13 @@
 #include <string.h>
 
 
+// Wczytaj wszystkie znaki do napotkania '\n' lub EOF.
 uint8_t readGarbage() {
 	char garbage = getchar();
 
 	while (garbage != '\n') {
 		if (garbage == -1) {
-			return 1; //EOF reached
+			return 1;
 		}
 		garbage = getchar();
 	}
@@ -23,10 +24,13 @@ uint8_t checkChar(char c) {
 }
 
 
+// Przeiteruj się po każdej dostępnej komendzie i porównaj z line.
+// Jeśli nie dopasowano wzorca zwróć -1.
 int32_t getCommand(uint32_t n, char *line, char *command[5]) {
 	for (uint32_t i = 0; i < 5; i++) {
 		int8_t check = i;
 		uint32_t curr_length = strlen(command[i]);
+		
 		if (n < curr_length) {
 			check = -1;
 		} else {

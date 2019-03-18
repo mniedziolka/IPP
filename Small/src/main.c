@@ -8,27 +8,26 @@
 #include "parser.h"
 #include "trie.h"
 
+
 int32_t main() {
     char *command[5] = {"DECLARE", "REMOVE", "VALID", "ENERGY", "EQUAL"};
-	size_t size_line = 32, n = 0; //n wskazuje na zaostatni
+    // Zmienna n to indeks zaostatniego elementu *line.
+	size_t size_line = 32, n = 0;
 	char *line = malloc(size_line * sizeof(char));
 	if (!line) {
         memoryError(line, NULL);
     }
-
-	uint8_t is_newline = 1, flag = 1; //flaga mówi czy napotkaliśmy EOF w środku whila
-
+    // Flaga mówi czy napotkaliśmy EOF podczas czytania linii.
+	bool is_newline = true, flag = true;
     int32_t curr_char = getchar();
-
     struct TrieNode *root = newNode();
 
-    //dopóki nie napotkamy EOF
-    while (flag == 1 && curr_char != -1) {
+    while (flag && curr_char != -1) {
     	switch (curr_char) {
     		case '\n':
                 if (n != 0) {
                     int32_t cmd = getCommand(n, line, command);
-                    int64_t historyA_length = -1, historyB_length = -1; //aktualny indeks do parsowania linii
+                    int64_t historyA_length = -1, historyB_length = -1;
                     char *historyA_pointer = NULL, *historyB_pointer = NULL;
                     uint64_t energy = 0;
                     line[n] = '\0';
@@ -43,7 +42,7 @@ int32_t main() {
                             index++;
                             historyA_pointer = &line[index];
                             historyA_length = getHistoryLength(&line[index]);
-                            if (historyA_length == -1) {
+                            if (historyA_length <= 0) {
                                 is_ok = false;
                             }
                             index += historyA_length;
@@ -51,7 +50,9 @@ int32_t main() {
                             is_ok = false;
                         }
                     }
-                    uint8_t arg = 2; //liczba argumentów do ENERGY
+
+                    // Liczba argumentów do ENERGY (cmd == 3)
+                    uint8_t arg = 2;
                     if (is_ok) {
                         if (cmd == 0 || cmd == 1 || cmd == 2) {
                             if (line[index] != '\0') {
@@ -72,13 +73,12 @@ int32_t main() {
                                 }
                             }
                         }
-
                         if (cmd == 4) {
                             if (line[index] == ' '){
                                 index++;
                                 historyB_pointer = &line[index];
                                 historyB_length = getHistoryLength(&line[index]);
-                                if (historyB_length == -1) {
+                                if (historyB_length <= 0) {
                                     is_ok = false;
                                 } else {
                                     index += historyB_length;
@@ -89,7 +89,6 @@ int32_t main() {
                             } else {
                                 is_ok = false;
                             }
-                            
                         }
                     }
 
@@ -104,10 +103,12 @@ int32_t main() {
                                     memoryError(line, root);
                                 }
                                 break;
+
                             case 1:
                                 removeTrie(root, historyA_pointer, historyA_length);
                                 printf("%s\n", "OK");
                                 break;
+
                             case 2:
                                 if (validTrie(root, historyA_pointer, historyA_length)) {
                                     printf("%s\n", "YES");
@@ -115,6 +116,7 @@ int32_t main() {
                                     printf("%s\n", "NO");
                                 }
                                 break;
+
                             case 3:
                                 if (arg == 1) {
                                     uint64_t energy = getEnergyTrie(root, historyA_pointer, historyA_length);
@@ -131,6 +133,7 @@ int32_t main() {
                                     }
                                 }
                                 break;
+
                             case 4:
                                 if (equalTrie(root, historyA_pointer, historyA_length, historyB_pointer, historyB_length)) {
                                     printf("%s\n", "OK");
@@ -143,7 +146,7 @@ int32_t main() {
                 }
                 
                 free(line);
-    			is_newline = 1;
+    			is_newline = true;
     			n = 0;
     			size_line = 32;
     			line = malloc(size_line * sizeof(char));
@@ -156,13 +159,12 @@ int32_t main() {
     			if (is_newline == 0) {
                     callError();
     			}
-
                 if (readGarbage() == 1) {
                     flag = 0;
                 }
 
                 free(line);
-                is_newline = 1;
+                is_newline = true;
                 n = 0;
                 size_line = 32;
                 line = malloc(size_line * sizeof(char));
@@ -173,7 +175,7 @@ int32_t main() {
 
     		default:
     			if (checkChar(curr_char)) {
-                    is_newline = 0;
+                    is_newline = false;
     				if (n == size_line - 1) {
     					size_line *= 2;
                         char *temp = realloc(line, size_line * sizeof(char));
@@ -191,8 +193,9 @@ int32_t main() {
                     if (flag){
                         callError();
                     }
+
                     free(line);
-    				is_newline = 1;
+    				is_newline = true;
     				n = 0;
     				size_line = 32;
     				line = malloc(size_line * sizeof(char));
@@ -205,7 +208,7 @@ int32_t main() {
         curr_char = getchar();
     }
 
-    //Pamietaj zwolnic pamiec
+    // Po przerwianiu pętli zwalnij drzewo i line.
     freeTrie(root);
     free(line);
 
