@@ -46,6 +46,7 @@ int32_t getCommand(uint32_t n, char *line, char *command[5]) {
 			return check;
 		}
 	}
+
 	return -1;
 }
 
@@ -63,11 +64,14 @@ int64_t getHistoryLength(char *line) {
 
 
 uint64_t getEnergy(char *line) {
+	uint64_t energy = 0;
+
 	if (line[0] != ' ') {
 		return 0;
 	}
 	line++;
-	uint64_t energy = 0;
+	
+	// Sprawdź czy następna cyfra nie przekroczy zakresu uint64_t.
 	while (*line != '\0') {
 		if ('0' <= *line && *line <= '9' && (UINT64_MAX - *line + '0') / 10 >= energy) {
 			energy = energy * 10 + *line - '0';

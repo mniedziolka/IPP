@@ -8,11 +8,13 @@
 
 
 struct TrieNode *newNode() {
+	// Stwórz węzeł w drzewie Trie.
 	struct TrieNode *node = malloc(sizeof(struct TrieNode));
 	if (!node) {
 		return NULL;
 	}
 
+	// Stwórz węzeł reprezentanta do findunion.
 	struct FUNode *temp = malloc(sizeof(struct FUNode));
 	if (!temp) {
 		return NULL;
@@ -32,7 +34,7 @@ struct TrieNode *newNode() {
 }
 
 
-struct TrieNode *getNode(struct TrieNode *root, const char *key, const int64_t n) {
+static struct TrieNode *getNode(struct TrieNode *root, const char *key, const int64_t n) {
 	struct TrieNode *node = root;
 	for (uint32_t i = 0; i < n; i++){
 		uint32_t curr = key[i] - '0';
@@ -58,7 +60,7 @@ void freeTrie(struct TrieNode *node) {
 }
 
 
-uint8_t insertTrie(struct TrieNode *root, const char *key, const int64_t n) {
+bool insertTrie(struct TrieNode *root, const char *key, const int64_t n) {
 	struct TrieNode *node = root;
 	for (uint32_t i = 0; i < n; i++) {
 		uint32_t curr = key[i] - '0';
@@ -67,16 +69,18 @@ uint8_t insertTrie(struct TrieNode *root, const char *key, const int64_t n) {
 			if (temp) {
 				node->children[curr] = temp;
 			} else {
-				return 0;
+				return false;
 			}
 		}
 		node = node->children[curr];
 	}
 
-	return 1;
+	return true;
 }
 
-// Usuwam wszystko od wierzchołka w dół, a potem ścieżkę do niego.
+
+// Usuń wszystko od ostatniego wierzchołka key w dół.
+// Usuń krawędź do ostatniego wierzchołka.
 void removeTrie(struct TrieNode *root, const char *key, const int64_t n) {
 	char last = key[n - 1];
 	struct TrieNode *node = getNode(root, key, n - 1);
@@ -87,23 +91,23 @@ void removeTrie(struct TrieNode *root, const char *key, const int64_t n) {
 }
 
 
-uint8_t validTrie(struct TrieNode *root, const char *key, const int64_t n) {
+bool validTrie(struct TrieNode *root, const char *key, const int64_t n) {
 	struct TrieNode *node = getNode(root, key, n);
 	return (node != NULL);
 }
 
 
-uint8_t energyUpdateTrie(struct TrieNode *root, const char *key, const int64_t n, uint64_t energy) {
+bool energyUpdateTrie(struct TrieNode *root, const char *key, const int64_t n, uint64_t energy) {
 	struct TrieNode *node = getNode(root, key, n);
 
 	if (!node) {
-		return 0;
+		return false;
 	}
 	
 	node->non_zero_energy = 1;
 	findRepresentative(node->rep_energy)->energy = energy;
 
-	return 1;
+	return true;
 }
 
 
@@ -112,31 +116,29 @@ uint64_t getEnergyTrie(struct TrieNode *root, const char *key, const int64_t n) 
 
 	if (node && node->non_zero_energy) {
 		return findRepresentative(node->rep_energy)->energy;
-	} else {
-		return 0;
 	}
-	
+
+	return 0;
 }
 
 
-uint8_t equalTrie(struct TrieNode *root, const char *keyA, const int64_t n, const char *keyB, const int64_t m) {
+bool equalTrie(struct TrieNode *root, const char *keyA, const int64_t n, const char *keyB, const int64_t m) {
 	struct TrieNode *nodeA = getNode(root, keyA, n);
 	struct TrieNode *nodeB = getNode(root, keyB, m);
 
 	if (nodeA == NULL || nodeB == NULL) {
-		return 0;
+		return false;
 	}
-
 	if (nodeA == nodeB) {
-		return 1;
+		return true;
+	}
+	if (!nodeA->non_zero_energy && !nodeB->non_zero_energy) {
+		return false;
 	}
 
-	if (!nodeA->non_zero_energy && !nodeB->non_zero_energy) {
-		return 0; //jeśli obie nie mają energii
-	}
 	nodeA->non_zero_energy = 1;
 	nodeB->non_zero_energy = 1;
 	unionNodes(nodeA->rep_energy, nodeB->rep_energy);
 
-	return 1;
+	return true;
 }

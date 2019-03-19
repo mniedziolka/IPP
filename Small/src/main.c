@@ -18,7 +18,8 @@ int32_t main() {
         memoryError(line, NULL);
     }
     // Flaga mówi czy napotkaliśmy EOF podczas czytania linii.
-	bool is_newline = true, flag = true;
+    // Cleanup mówi czy musimy wyczyścić linię.
+	bool is_newline = true, flag = true, cleanup  = false;
     int32_t curr_char = getchar();
     struct TrieNode *root = newNode();
 
@@ -144,15 +145,7 @@ int32_t main() {
                         }
                     }
                 }
-                
-                free(line);
-    			is_newline = true;
-    			n = 0;
-    			size_line = 32;
-    			line = malloc(size_line * sizeof(char));
-				if (!line) {
-                    memoryError(line, root);
-                }
+                cleanup = true;
     			break;
 
     		case '#':
@@ -162,15 +155,7 @@ int32_t main() {
                 if (readGarbage() == 1) {
                     flag = 0;
                 }
-
-                free(line);
-                is_newline = true;
-                n = 0;
-                size_line = 32;
-                line = malloc(size_line * sizeof(char));
-                if (!line) {
-                    memoryError(line, root);
-                }
+                cleanup = true;
     			break;
 
     		default:
@@ -194,17 +179,24 @@ int32_t main() {
                         callError();
                     }
 
-                    free(line);
-    				is_newline = true;
-    				n = 0;
-    				size_line = 32;
-    				line = malloc(size_line * sizeof(char));
-                    if (!line) {
-                        memoryError(line, root);
-                    }
+                    cleanup = true;
     			}
     			break;
     	}
+
+        // Wyczyść linię po # \n lub nieprawidłowym znaku.
+        if (cleanup) {
+            free(line);
+            is_newline = true;
+            n = 0;
+            size_line = 32;
+            line = malloc(size_line * sizeof(char));
+            if (!line) {
+                memoryError(line, root);
+            }
+            cleanup = false;
+        }
+
         curr_char = getchar();
     }
 

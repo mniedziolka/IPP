@@ -6,14 +6,11 @@
 
 
 struct FUNode *findRepresentative(struct FUNode *node) {
-	//do decyzji, aktualna wersja bez leaka
-
 	if (node->rep == node) {
 		return node;
 	}
-	return findRepresentative(node->rep);
 
-	return node->rep;
+	return findRepresentative(node->rep);
 }
 
 
@@ -32,12 +29,12 @@ void unionNodes(struct FUNode *nodeA, struct FUNode *nodeB) {
 		final_energy = energyA;
 	}
 	if (energyA != 0 && energyB != 0) {
-		//ryzyko overflow uint64
+		// Średnia arytmetyczna z uwzględnieniem overflow uint64_t.
 		final_energy = (energyA / 2) + (energyB / 2) + (energyA % 2 == 1 && energyB % 2 == 1);
 	}
 
 	if (rep_nodeA != rep_nodeB) {
-		//przepinam wierzchołki z mniejszej na większą
+		// Przepinam wierzchołek z mniejszą liczbą wchodzących na większą.
 		if (rep_nodeA->indeg > rep_nodeB->indeg) {
 			rep_nodeA->energy = final_energy;
 			rep_nodeA->indeg++;
@@ -51,6 +48,8 @@ void unionNodes(struct FUNode *nodeA, struct FUNode *nodeB) {
 }
 
 
+// Przejdź po ścieżce w górę i zmniejsz indeg.
+// Jeśli jesteś ostatnią krawędzią wchodzącą zwolnij wierzchołek. 
 void freeFU(struct FUNode *node) {
 	if (node->indeg == 1) {
 		if (node->rep != node) {
