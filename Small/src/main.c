@@ -208,7 +208,7 @@ int32_t main() {
         curr_char = getchar();
     }
 
-    // Po przerwianiu pętli zwalnij drzewo i line.
+    // Po przerwianiu pętli zwolnij drzewo i line.
     freeTrie(root);
     free(line);
 
