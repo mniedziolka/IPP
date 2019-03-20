@@ -10,7 +10,7 @@
 struct TrieNode {
 	struct TrieNode *children[ALPHABET_SIZE];
 	uint8_t non_zero_energy;
-	struct FUNode *rep_energy; //reprezentant
+	struct FUNode *rep_energy;
 };
 
 struct TrieNode *newNode();
