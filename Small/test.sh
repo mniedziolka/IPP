@@ -41,5 +41,4 @@ do
 	else
 		echo -e "${RED}[Memory]	${COLOR_OFF}${file}"
 	fi
-
 done

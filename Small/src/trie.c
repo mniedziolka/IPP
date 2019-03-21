@@ -86,6 +86,7 @@ bool insertTrie(struct TrieNode *root, const char *key, const int64_t n) {
 void removeTrie(struct TrieNode *root, const char *key, const int64_t n) {
 	char last = key[n - 1];
 	struct TrieNode *node = getNode(root, key, n - 1);
+	
 	if (node) {
 		freeTrie(node->children[last-'0']);
 		node->children[last-'0'] = NULL;
