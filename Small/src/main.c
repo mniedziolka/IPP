@@ -19,7 +19,7 @@ int32_t main() {
     }
     // Flaga mówi czy napotkaliśmy EOF podczas czytania linii.
     // Cleanup mówi czy musimy wyczyścić linię.
-	bool is_newline = true, flag = true, cleanup  = false;
+	bool is_newline = true, cleanup = false, flag = true;
     int32_t curr_char = getchar();
     struct TrieNode *root = newNode();
 
@@ -153,7 +153,7 @@ int32_t main() {
                     callError();
     			}
                 if (readGarbage() == 1) {
-                    flag = 0;
+                    flag = false;
                 }
                 cleanup = true;
     			break;
@@ -173,12 +173,10 @@ int32_t main() {
     				n++;
     			} else {
                     if (readGarbage() == 1) {
-                        flag = 0;
+                        flag = false;
                     }
-                    if (flag){
-                        callError();
-                    }
-
+                    callError();
+                    
                     cleanup = true;
     			}
     			break;
@@ -191,6 +189,7 @@ int32_t main() {
             n = 0;
             size_line = 32;
             line = malloc(size_line * sizeof(char));
+            *line = '\0';
             if (!line) {
                 memoryError(line, root);
             }
@@ -198,6 +197,11 @@ int32_t main() {
         }
 
         curr_char = getchar();
+    }
+
+    // Wypisz błąd jeśli plik skończył się bez '\n'
+    if (*line != '\0') {
+        callError();
     }
 
     // Po przerwianiu pętli zwolnij drzewo i line.
