@@ -36,7 +36,8 @@ struct TrieNode *newNode() {
 
 static struct TrieNode *getNode(struct TrieNode *root, const char *key, const int64_t n) {
 	struct TrieNode *node = root;
-	for (uint32_t i = 0; i < n; i++){
+
+	for (uint32_t i = 0; i < n; i++) {
 		uint32_t curr = key[i] - '0';
 		if (!node->children[curr]) {
 			return NULL;
@@ -62,6 +63,7 @@ void freeTrie(struct TrieNode *node) {
 
 bool insertTrie(struct TrieNode *root, const char *key, const int64_t n) {
 	struct TrieNode *node = root;
+
 	for (uint32_t i = 0; i < n; i++) {
 		uint32_t curr = key[i] - '0';
 		if (!node->children[curr]) {
@@ -93,6 +95,7 @@ void removeTrie(struct TrieNode *root, const char *key, const int64_t n) {
 
 bool validTrie(struct TrieNode *root, const char *key, const int64_t n) {
 	struct TrieNode *node = getNode(root, key, n);
+	
 	return (node != NULL);
 }
 

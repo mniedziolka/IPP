@@ -1,3 +1,4 @@
+#include <stdbool.h>
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -5,21 +6,21 @@
 
 
 // Wczytaj wszystkie znaki do napotkania '\n' lub EOF.
-uint8_t readGarbage() {
+bool readGarbage() {
 	char garbage = getchar();
 
 	while (garbage != '\n') {
 		if (garbage == -1) {
-			return 1;
+			return true;
 		}
 		garbage = getchar();
 	}
 
-	return 0;
+	return false;
 }
 
 
-uint8_t checkChar(char c) {
+bool checkChar(char c) {
 	return (('A' <= c && c <= 'Z') || ('a' <= c && c <= 'z') || ('0' <= c && c <= '9') || (c == ' '));
 }
 
@@ -51,7 +52,7 @@ int32_t getCommand(uint32_t n, char *line, char *command[5]) {
 }
 
 
-int64_t getHistoryLength(char *line) {
+uint64_t getHistoryLength(char *line) {
 	int64_t result = 0;
 
 	while ('0' <= *line && *line <= '3') {
